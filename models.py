@@ -1,11 +1,18 @@
-import os
-import google.generativeai as genai
-from dotenv import load_dotenv
+from transformers import pipeline
+from PIL import Image
 
-load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+# Initialize the pipeline once to avoid reloading it
+# Use a pipeline as a high-level helper
+captioner = pipeline("image-to-text", model="Salesforce/blip-image-captioning-base")
 
-print("List of available models:")
-for m in genai.list_models():
-    if 'generateContent' in m.supported_generation_methods:
-        print(m.name)
+def generate_caption(image: Image.Image):
+    """Generates a caption for the given image using Salesforce/blip-image-captioning-base."""
+    try:
+        results = captioner(image)
+        # The result is a list of dictionaries, e.g., [{'generated_text': 'a caption'}]
+        return results[0]['generated_text']
+    except Exception as e:
+        return f"Error generating caption: {e}"
+
+if __name__ == "__main__":
+    print("Model loaded successfully.")
