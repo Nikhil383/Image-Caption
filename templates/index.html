@@ -1,94 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Image Captioner</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 400px;
-        }
-        h1 { color: #333; }
-        input[type="file"] {
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px dashed #ccc;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
-        }
-        button:hover { background-color: #0056b3; }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-radius: 8px;
-            text-align: left;
-            border-left: 5px solid #007bff;
-        }
-        .loader {
-            display: none; /* Hidden by default */
-            margin-top: 10px;
-            color: #666;
-        }
-    </style>
+    <title>AI Image Captioner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
+    <div class="container">
+        <h1>AI Image Captioner</h1>
+        <p class="subtitle">Generate descriptive captions for your images instantly using BLIP AI.</p>
 
-<div class="container">
-    <h1>AI Image Captioner</h1>
-    <p>Upload an image to generate a caption using Gemini 1.5.</p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
 
-    <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
-        <input type="file" name="file" accept="image/*" required>
-        <br>
-        <button type="submit">Generate Caption</button>
-    </form>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="upload-area">
+                <div class="icon">🖼️</div>
+                <p>Click or Drag to Upload Image</p>
+                <input type="file" name="image" accept="image/*" required
+                    onchange="this.parentElement.querySelector('p').textContent = this.files[0].name">
+            </div>
 
-    <div id="loader" class="loader">Thinking... 🤖</div>
+            <button type="submit" class="btn-generate">Generate Caption</button>
+        </form>
 
-    {% if caption %}
-    <div class="result">
-        <strong>AI Caption:</strong>
-        <p>{{ caption }}</p>
+        {% if caption %}
+        <div class="result-box">
+            {% if image_data %}
+            <div class="image-container">
+                <img src="{{ image_data }}" alt="Uploaded Image" class="uploaded-image">
+            </div>
+            {% endif %}
+            <h3>✨ Generated Caption:</h3>
+            <p class="caption-text">{{ caption }}</p>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-
-    {% if error %}
-    <div class="result" style="border-left-color: red; color: red;">
-        <strong>Error:</strong> {{ error }}
     </div>
-    {% endif %}
-</div>
 
-<script>
-    function showLoader() {
-        document.getElementById('loader').style.display = 'block';
-    }
-</script>
+    <script>
+        const fileInput = document.querySelector('input[type="file"]');
+        const uploadArea = document.querySelector('.upload-area');
+        const iconDiv = document.querySelector('.icon');
+        const textP = document.querySelector('.upload-area p');
 
+        // Create preview element if not exists (for initial state)
+        let previewImg = document.createElement('img');
+        previewImg.style.maxWidth = '100%';
+        previewImg.style.maxHeight = '200px';
+        previewImg.style.borderRadius = '8px';
+        previewImg.style.marginTop = '1rem';
+        previewImg.style.display = 'none'; // Hidden by default
+        uploadArea.appendChild(previewImg);
+
+        fileInput.addEventListener('change', function (e) {
+            const file = this.files[0];
+
+            if (file) {
+                // Update text
+                textP.textContent = file.name;
+
+                // Show preview
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                    iconDiv.style.display = 'none'; // Hide icon
+                }
+
+                reader.readAsDataURL(file);
+            } else {
+                textP.textContent = "Click or Drag to Upload Image";
+                previewImg.style.display = 'none';
+                iconDiv.style.display = 'block';
+            }
+        });
+    </script>
 </body>
+
 </html>

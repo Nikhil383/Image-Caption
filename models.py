@@ -1,18 +1,52 @@
 from transformers import pipeline
 from PIL import Image
+import threading
 
-# Initialize the pipeline once to avoid reloading it
-# Use a pipeline as a high-level helper
-captioner = pipeline("image-to-text", model="Salesforce/blip-image-captioning-base")
+# Singleton pattern for the model to ensure it's removed from global scope if we move to a class-based system,
+# but for now we use a lazy loading approach.
 
-def generate_caption(image: Image.Image):
-    """Generates a caption for the given image using Salesforce/blip-image-captioning-base."""
+class CaptionModel:
+    _instance = None
+    _lock = threading.Lock()
+    _model_name = "Salesforce/blip-image-captioning-base"
+
+    @classmethod
+    def get_pipeline(cls):
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    print(f"Loading model: {cls._model_name}...")
+                    cls._instance = pipeline("image-to-text", model=cls._model_name)
+                    print("Model loaded successfully.")
+        return cls._instance
+
+def generate_caption(image: Image.Image) -> str:
+    """
+    Generates a caption for the given image using the BLIP model.
+    
+    Args:
+        image (PIL.Image.Image): The input image to caption.
+        
+    Returns:
+        str: The generated caption or an error message.
+    """
     try:
-        results = captioner(image)
-        # The result is a list of dictionaries, e.g., [{'generated_text': 'a caption'}]
-        return results[0]['generated_text']
+        # Get the model instance (lazy loaded)
+        captioneer = CaptionModel.get_pipeline()
+        
+        # Inference
+        results = captioneer(image)
+        
+        # Validation
+        if not results or "generated_text" not in results[0]:
+            raise ValueError("Model returned unexpected format.")
+            
+        return results[0]["generated_text"]
+        
     except Exception as e:
-        return f"Error generating caption: {e}"
+        # In a real app, use logging here
+        return f"Error analyzing image: {str(e)}"
 
 if __name__ == "__main__":
-    print("Model loaded successfully.")
+    # Test load
+    CaptionModel.get_pipeline()
