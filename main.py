@@ -43,7 +43,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🖼️ AI Image Captioning Tool")
+st.title("AI Image Captioning Tool")
 st.markdown("### Transform your images into descriptive text with BLIP.")
 
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
@@ -69,4 +69,4 @@ if uploaded_file is not None:
                 st.error(f"An error occurred: {e}")
 
 st.markdown("---")
-st.markdown("Built with ❤️ using Streamlit and Transformers.")
+st.markdown("Built using Streamlit and Transformers.")
