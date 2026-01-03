@@ -23,10 +23,8 @@ COPY . .
 RUN useradd -m appuser && chown -R appuser /app
 USER appuser
 
-# Expose port
-EXPOSE 5000
+# Expose port 7860 (Hugging Face default)
+EXPOSE 7860
 
 # Run the application using uv run and gunicorn/flask
-# For simplicity/dev, we use flask run. For prod, we'd use gunicorn.
-# Using 'python -m flask' or just 'flask' via uv
-CMD ["uv", "run", "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["uv", "run", "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=7860"]
