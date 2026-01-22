@@ -55,10 +55,16 @@ uv sync
 
 ### Running the Application
 
-Run the Flask app server:
+Using Make:
 
 ```bash
-uv run python -m flask run
+make run
+```
+
+Or manually:
+
+```bash
+uv run python -m image_caption.app
 ```
 Access the application at: `http://localhost:5000`
 
@@ -67,21 +73,26 @@ Access the application at: `http://localhost:5000`
 Build and run the containerized application:
 
 ```bash
-docker build -t image-caption .
-docker run -p 5000:5000 image-caption
+make docker-build
+make docker-run
 ```
 
 ##  Project Structure
 
 ```
 .
-├── app.py              # Flask entry point & route logic
-├── models.py           # Thread-safe ML model integration
-├── templates/          # HTML templates with JS logic
-├── static/             # Modern CSS styling
-├── Dockerfile          # Multi-stage Docker build
-├── pyproject.toml      # Project configuration & dependencies
-└── uv.lock             # Exact dependency lockfile
+├── src/
+│   └── image_caption/  # Main package
+│       ├── app.py      # Flask entry point
+│       ├── models.py   # Model integration
+│       ├── templates/  # Javascript/HTML
+│       └── static/     # CSS/Images
+├── tests/              # Test suite (pytest)
+├── notebooks/          # Jupyter notebooks
+├── Makefile            # Command shortcuts
+├── Dockerfile          # Production Dockerfile
+├── pyproject.toml      # Project configuration
+└── uv.lock             # Dependency lockfile
 ```
 
 ## Author

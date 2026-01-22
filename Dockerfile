@@ -14,17 +14,19 @@ WORKDIR /app
 
 # Install dependencies using uv
 COPY pyproject.toml uv.lock ./
+# Copy source code for installation identification
+COPY src/ src/
 RUN uv sync --frozen --no-dev
 
-# Copy the rest of the project
+# Copy the rest of the project (config, README, etc.)
 COPY . .
 
 # Create a non-root user
 RUN useradd -m appuser && chown -R appuser /app
 USER appuser
 
-# Expose port 7860 (Hugging Face default)
+# Expose port 7860
 EXPOSE 7860
 
-# Run the application using uv run and gunicorn/flask
-CMD ["uv", "run", "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=7860"]
+# Run the application using gunicorn
+CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:7860", "image_caption.app:app"]

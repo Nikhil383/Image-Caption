@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from PIL import Image
-from models import generate_caption
+from .models import generate_caption
 import os
 import io
 import base64

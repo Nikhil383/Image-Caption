@@ -2,12 +2,12 @@
 
 import pytest
 from PIL import Image
-from models import CaptionModel, generate_caption
+from image_caption.models import CaptionModel, generate_caption
 from unittest.mock import MagicMock, patch
 
 @pytest.fixture
 def mock_pipeline():
-    with patch('models.pipeline') as mock:
+    with patch('image_caption.models.pipeline') as mock:
         yield mock
 
 def test_model_singleton(mock_pipeline):
