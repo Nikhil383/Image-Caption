@@ -1,5 +1,9 @@
 # Multimodal Image Captioning Engine
 
+## Problem Statement
+
+Manual image captioning is slow, inconsistent, and does not scale. Many images lack descriptions, which hurts accessibility (e.g. for screen readers), SEO, and content management. This project addresses that by providing an end-to-end, production-ready system that generates accurate, natural-language captions from images using a state-of-the-art vision–language model (BLIP), with a simple web interface and Docker deployment.
+
 ## Project Overview
 
 This project implements an industrial-grade end-to-end Multimodal AI solution for automatically generating natural language descriptions (captions) from input images. It leverages the **Salesforce/blip-image-captioning-base** model via Hugging Face Transformers, wrapped in a scalable **Flask** web application with a modern, responsive UI.
