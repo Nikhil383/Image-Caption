@@ -98,6 +98,12 @@ make docker-run
 ├── pyproject.toml      # Project configuration
 └── uv.lock             # Dependency lockfile
 ```
+## Demo
+
+<img width="1919" height="928" alt="image" src="https://github.com/user-attachments/assets/85437049-0149-4379-a8d4-f98faf287928" />
+
+<img width="1916" height="972" alt="image" src="https://github.com/user-attachments/assets/2f95d080-b609-492e-8f79-e7ba8f1ce297" />
+
 
 ## Author
 Nikhil Mahesh
