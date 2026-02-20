@@ -32,7 +32,11 @@
                     onchange="this.parentElement.querySelector('p').textContent = this.files[0].name">
             </div>
 
-            <button type="submit" class="btn-generate">Generate Caption</button>
+            <button type="submit" class="btn-generate" id="submit-btn">Generate Caption</button>
+            <div id="loading-indicator" class="loading-indicator" style="display: none;">
+                <span class="spinner"></span>
+                <span>Generating caption...</span>
+            </div>
         </form>
 
         {% if caption %}
@@ -47,13 +51,15 @@
         </div>
         {% endif %}
     </div>
-    </div>
 
     <script>
         const fileInput = document.querySelector('input[type="file"]');
         const uploadArea = document.querySelector('.upload-area');
         const iconDiv = document.querySelector('.icon');
         const textP = document.querySelector('.upload-area p');
+        const submitBtn = document.getElementById('submit-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const form = document.querySelector('form');
 
         // Create preview element if not exists (for initial state)
         let previewImg = document.createElement('img');
@@ -86,6 +92,18 @@
                 previewImg.style.display = 'none';
                 iconDiv.style.display = 'block';
             }
+        });
+
+        // Handle form submission - show loading state
+        form.addEventListener('submit', function(e) {
+            if (fileInput.files.length === 0) {
+                return; // Let browser validation handle this
+            }
+            
+            // Disable submit button and show loading indicator
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Generating...';
+            loadingIndicator.style.display = 'flex';
         });
     </script>
 </body>
