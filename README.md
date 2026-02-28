@@ -81,15 +81,6 @@ docker build -t image-caption .
 docker run -p 5000:10000 -e GOOGLE_API_KEY=your_key_here image-caption
 ```
 
-## Deployment on Render
-
-1.  **Create a New Web Service**: Connect your GitHub repository.
-2.  **Environment Variables**:
-    *   `GOOGLE_API_KEY`: Your Gemini API key from [Google AI Studio](https://aistudio.google.com/).
-    *   `SECRET_KEY`: A random string for Flask sessions.
-3.  **Health Check**: Set the health check path to `/health`.
-4.  **Runtime**: Docker (Render will use your `Dockerfile` automatically).
-
 ##  Project Structure
 
 ```
@@ -113,6 +104,7 @@ docker run -p 5000:10000 -e GOOGLE_API_KEY=your_key_here image-caption
 
 <img width="1916" height="972" alt="image" src="https://github.com/user-attachments/assets/2f95d080-b609-492e-8f79-e7ba8f1ce297" />
 
+-Deplyment link for the app: [Link](https://image-caption-ejph.onrender.com)
 
 ## Author
 Nikhil Mahesh
