@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1
 ENV UV_LINK_MODE=copy
 ENV UV_COMPILE_BYTECODE=1
 
-# System dependencies (needed for torch + transformers + pillow)
+# System dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     git \
@@ -19,18 +19,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv
 RUN pip install --no-cache-dir uv
 
-# Copy only dependency files first (better caching)
-COPY pyproject.toml uv.lock ./
+# Copy dependency files + README (IMPORTANT FIX)
+COPY pyproject.toml uv.lock README.md ./
 
-# 🔥 REMOVE --frozen (causing failure on Render)
+# Install dependencies
 RUN uv sync --no-dev
 
 # Copy rest of project
 COPY . .
 
-# Render dynamic port
 ENV PORT=10000
 EXPOSE 10000
 
-# Use uv run
 CMD ["sh", "-c", "uv run gunicorn --bind 0.0.0.0:$PORT src.app:app"]
