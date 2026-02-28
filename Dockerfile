@@ -1,41 +1,36 @@
-# Use python 3.11 slim as base
-FROM python:3.11-slim-bookworm
+FROM python:3.11-slim
 
-# Install system dependencies (important for torch, transformers etc.)
-RUN apt-get update && apt-get install -y \
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1
+ENV UV_LINK_MODE=copy
+ENV UV_COMPILE_BYTECODE=1
+
+# System dependencies (needed for torch + transformers + pillow)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    git \
     curl \
+    ca-certificates \
+    libgl1 \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+RUN pip install --no-cache-dir uv
 
-# Environment variables
-ENV UV_COMPILE_BYTECODE=1
-ENV UV_LINK_MODE=copy
-ENV PYTHONUNBUFFERED=1
-
-# Set work directory
-WORKDIR /app
-
-# Copy only dependency files first (for Docker layer caching)
+# Copy only dependency files first (better caching)
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies
+# 🔥 REMOVE --frozen (causing failure on Render)
 RUN uv sync --no-dev
 
-# Copy full project
+# Copy rest of project
 COPY . .
 
-# Create non-root user
-RUN useradd -m appuser && chown -R appuser /app
-USER appuser
-
-# Render provides PORT dynamically
+# Render dynamic port
 ENV PORT=10000
-
-# Expose port (Render ignores EXPOSE but good practice)
 EXPOSE 10000
 
-# Start app
-CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:10000", "image_caption.app:app"]
+# Use uv run
+CMD ["sh", "-c", "uv run gunicorn --bind 0.0.0.0:$PORT src.app:app"]
