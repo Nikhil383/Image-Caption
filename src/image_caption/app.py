@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from PIL import Image, UnidentifiedImageError
-from .models import generate_caption
 import os
 import io
 import base64
 import logging
 from werkzeug.exceptions import RequestEntityTooLarge
+from .models import generate_caption, API_KEY
 
 # Configure logging
 logging.basicConfig(
@@ -13,6 +13,9 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+if not API_KEY:
+    logger.warning("WARNING: GOOGLE_API_KEY is not set. The application will not be able to generate captions.")
 
 app = Flask(__name__)
 # Use a secure secret key in production
@@ -91,6 +94,12 @@ def index():
                 
     return render_template("index.html", caption=caption, image_data=image_data)
 
+@app.route("/health")
+def health_check():
+    """Liveness probe for Render."""
+    status = "healthy" if API_KEY else "unconfigured"
+    return {"status": status, "model": "gemini-1.5-flash"}, 200
+
 @app.errorhandler(RequestEntityTooLarge)
 def handle_file_too_large(e):
     """Handle file size limit exceeded."""
@@ -101,7 +110,6 @@ def handle_file_too_large(e):
 
 
 if __name__ == "__main__":
-    # Host on 0.0.0.0 for Docker compatibility
     port = int(os.environ.get("PORT", 5000))
     debug = os.environ.get("FLASK_ENV") == "development"
     logger.info(f"Starting Flask app on port {port}, debug={debug}")

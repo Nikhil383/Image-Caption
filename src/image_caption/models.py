@@ -1,31 +1,25 @@
-from transformers import pipeline
+import google.generativeai as genai
 from PIL import Image
-import threading
+import os
 import logging
+from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables for local development
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Singleton pattern for the model to ensure it's removed from global scope if we move to a class-based system,
-# but for now we use a lazy loading approach.
-
-class CaptionModel:
-    _instance = None
-    _lock = threading.Lock()
-    _model_name = "Salesforce/blip-image-captioning-base"
-
-    @classmethod
-    def get_pipeline(cls):
-        if cls._instance is None:
-            with cls._lock:
-                if cls._instance is None:
-                    logger.info(f"Loading model: {cls._model_name}...")
-                    cls._instance = pipeline("image-to-text", model=cls._model_name)
-                    logger.info("Model loaded successfully.")
-        return cls._instance
+# Configure the Gemini API
+API_KEY = os.environ.get("GOOGLE_API_KEY")
+if API_KEY:
+    genai.configure(api_key=API_KEY)
+else:
+    logger.error("GOOGLE_API_KEY not found in environment variables.")
 
 def generate_caption(image: Image.Image) -> str:
     """
-    Generates a caption for the given image using the BLIP model.
+    Generates a caption for the given image using the Google Gemini model.
     
     Args:
         image (PIL.Image.Image): The input image to caption.
@@ -34,25 +28,38 @@ def generate_caption(image: Image.Image) -> str:
         str: The generated caption or an error message.
     """
     try:
-        # Get the model instance (lazy loaded)
-        captioneer = CaptionModel.get_pipeline()
+        if not API_KEY:
+            return "Error: GOOGLE_API_KEY is not configured. Please set it in your environment."
+
+        # Use the gemini-1.5-flash model which is fast and efficient for vision tasks
+        model = genai.GenerativeModel("gemini-2.5-flash")
         
-        # Inference
-        results = captioneer(image)
+        # Construct the prompt
+        prompt = "Write a concise, descriptive caption for this image."
+        
+        # Generate the content
+        # Note: we pass the image directly (PIL.Image is supported by the SDK)
+        response = model.generate_content([prompt, image])
         
         # Validation
-        if not results or "generated_text" not in results[0]:
-            raise ValueError("Model returned unexpected format.")
+        if not response or not response.text:
+            raise ValueError("Gemini API returned an empty response.")
             
-        return results[0]["generated_text"]
+        return response.text.strip()
         
     except ValueError as e:
-        logger.error(f"Model validation error: {e}")
-        return "Error analyzing image: Invalid model response."
+        logger.error(f"API validation error: {e}")
+        return "Error analyzing image: The AI returned an invalid response."
     except Exception as e:
         logger.exception(f"Unexpected error during caption generation: {e}")
-        return "Error analyzing image: An unexpected error occurred."
+        return f"Error analyzing image: {str(e)}"
 
 if __name__ == "__main__":
-    # Test load
-    CaptionModel.get_pipeline()
+    # Test block
+    if not API_KEY:
+        print("Set GOOGLE_API_KEY env var to run this test.")
+    else:
+        # Create a tiny dummy image for testing
+        dummy_img = Image.new('RGB', (10, 10), color='red')
+        caption = generate_caption(dummy_img)
+        print(f"Test Caption: {caption}")

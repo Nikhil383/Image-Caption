@@ -10,7 +10,7 @@ This project implements an industrial-grade end-to-end Multimodal AI solution fo
 
 ## Key Features
 
-*   **Advanced AI Model**: Uses BLIP (Bootstrapping Language-Image Pre-training) for high-accuracy image understanding.
+*   **Advanced AI Model**: Powered by **Google Gemini 1.5 Flash** for blazing-fast, high-accuracy image understanding.
 *   **Modern UI/UX**:
     *   Responsive design with polished CSS.
     *   **Drag & Drop** file upload support.
@@ -32,10 +32,10 @@ The application uses the **BLIP (Bootstrapping Language-Image Pre-training)** mo
 
 | Category | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Model** | BLIP Base | Image captioning model. |
+| **Model** | Google Gemini 1.5 Flash | SOTA Vision-to-Text API. |
 | **Backend** | Flask | Lightweight, scalable web server. |
 | **Frontend** | HTML5, CSS3, JS | Responsive interface with direct DOM manipulation. |
-| **ML Libraries** | Transformers, Torch | Model loading and inference. |
+| **Libraries** | Google GenAI SDK | Interaction with Gemini API. |
 | **DevOps** | UV, Docker | Fast dependency resolution & containerization. |
 | **Language** | Python 3.11+ | Primary programming language. |
 
@@ -77,9 +77,18 @@ Access the application at: `http://localhost:5000`
 Build and run the containerized application:
 
 ```bash
-make docker-build
-make docker-run
+docker build -t image-caption .
+docker run -p 5000:10000 -e GOOGLE_API_KEY=your_key_here image-caption
 ```
+
+## Deployment on Render
+
+1.  **Create a New Web Service**: Connect your GitHub repository.
+2.  **Environment Variables**:
+    *   `GOOGLE_API_KEY`: Your Gemini API key from [Google AI Studio](https://aistudio.google.com/).
+    *   `SECRET_KEY`: A random string for Flask sessions.
+3.  **Health Check**: Set the health check path to `/health`.
+4.  **Runtime**: Docker (Render will use your `Dockerfile` automatically).
 
 ##  Project Structure
 

@@ -12,7 +12,7 @@
 <body>
     <div class="container">
         <h1>AI Image Captioner</h1>
-        <p class="subtitle">Generate descriptive captions for your images instantly using BLIP AI.</p>
+        <p class="subtitle">Generate descriptive captions for your images instantly using Gemini API.</p>
 
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -46,7 +46,7 @@
                 <img src="{{ image_data }}" alt="Uploaded Image" class="uploaded-image">
             </div>
             {% endif %}
-            <h3>✨ Generated Caption:</h3>
+            <h3>Generated Caption:</h3>
             <p class="caption-text">{{ caption }}</p>
         </div>
         {% endif %}

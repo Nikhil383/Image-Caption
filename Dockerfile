@@ -2,33 +2,33 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Optimization: Don't write pyc, don't buffer stdout
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV UV_LINK_MODE=copy
 ENV UV_COMPILE_BYTECODE=1
+ENV PYTHONPATH=/app/src
 
-# System dependencies
+# System dependencies (minimal for flask/pillow)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    git \
     curl \
     ca-certificates \
-    libgl1 \
-    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
+# Install uv for fast dependency management
 RUN pip install --no-cache-dir uv
 
-# Copy dependency files + README (IMPORTANT FIX)
+# Copy project files
 COPY pyproject.toml uv.lock README.md ./
+COPY src/ src/
 
-# Install dependencies
+# Install dependencies excluding dev group
 RUN uv sync --no-dev
 
-# Copy rest of project
-COPY . .
-
+# Render uses the PORT env var
 ENV PORT=10000
 EXPOSE 10000
 
-CMD ["sh", "-c", "uv run gunicorn --bind 0.0.0.0:$PORT src.app:app"]
+# Start with gunicorn
+# Note: Since the model is in the cloud (Gemini), we can use more workers!
+CMD ["sh", "-c", "uv run gunicorn --bind 0.0.0.0:$PORT --workers 4 --access-logfile - --error-logfile - image_caption.app:app"]

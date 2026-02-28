@@ -19,4 +19,4 @@ docker-build:
 	docker build -t image-caption .
 
 docker-run:
-	docker run -p 7860:7860 image-caption
+	docker run -p 5000:10000 --env-file .env image-caption
