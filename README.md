@@ -2,15 +2,15 @@
 
 ## Problem Statement
 
-Manual image captioning is slow, inconsistent, and does not scale. Many images lack descriptions, which hurts accessibility (e.g. for screen readers), SEO, and content management. This project addresses that by providing an end-to-end, production-ready system that generates accurate, natural-language captions from images using a state-of-the-art vision–language model (BLIP), with a simple web interface and Docker deployment.
+Manual image captioning is slow, inconsistent, and does not scale. Many images lack descriptions, which hurts accessibility (e.g. for screen readers), SEO, and content management. This project addresses the need for an automated, scalable solution to overcome these bottlenecks and provide high-quality natural language captions for any image.
 
 ## Project Overview
 
-This project implements an industrial-grade end-to-end Multimodal AI solution for automatically generating natural language descriptions (captions) from input images. It leverages the **Salesforce/blip-image-captioning-base** model via Hugging Face Transformers, wrapped in a scalable **Flask** web application with a modern, responsive UI.
+This project implements an industrial-grade end-to-end Multimodal AI solution for automatically generating natural language descriptions (captions) from input images. It leverages the state-of-the-art **Google Gemini Vision** model, wrapped in a scalable **Flask** web application with a modern, responsive UI. It replaces legacy vision models with the blazing-fast and highly accurate Gemini API.
 
 ## Key Features
 
-*   **Advanced AI Model**: Powered by **Google Gemini 1.5 Flash** for blazing-fast, high-accuracy image understanding.
+*   **Advanced AI Model**: Powered by **Google Gemini Flash** for blazing-fast, high-accuracy image understanding.
 *   **Modern UI/UX**:
     *   Responsive design with polished CSS.
     *   **Drag & Drop** file upload support.
@@ -19,20 +19,19 @@ This project implements an industrial-grade end-to-end Multimodal AI solution fo
 *   **Production Ready**:
     *   **Dockerized** for easy deployment.
     *   **Safe Dependency Management** using `uv`.
-    *   **Thread-Safe** model loading (Singleton pattern).
 
 ## Architecture
 
-### BLIP Model
-The application uses the **BLIP (Bootstrapping Language-Image Pre-training)** model.
--   **Vision Encoder (ViT)**: Processes the image into visual features.
--   **Text Decoder**: Generates the text caption based on the visual features.
+The application follows a standard client-server architecture integrating a cloud-based LLM:
+-   **Client Layer**: A responsive web frontend (HTML/CSS/JS) capturing user image uploads via drag-and-drop or file selection.
+-   **Server Layer**: A Flask backend that handles file validation, stream processing, and securely manages API communication.
+-   **AI Layer**: integration with the **Google Gemini API** (`gemini-1.5-flash` / `gemini-2.5-flash`), transmitting image streams directly to the vision encoder for natural language caption generation.
 
-## Technology Stack
+## Technology stack
 
 | Category | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Model** | Google Gemini 1.5 Flash | SOTA Vision-to-Text API. |
+| **Model** | Google Gemini Flash | SOTA Vision-to-Text API. |
 | **Backend** | Flask | Lightweight, scalable web server. |
 | **Frontend** | HTML5, CSS3, JS | Responsive interface with direct DOM manipulation. |
 | **Libraries** | Google GenAI SDK | Interaction with Gemini API. |
@@ -43,7 +42,8 @@ The application uses the **BLIP (Bootstrapping Language-Image Pre-training)** mo
 
 ### Prerequisites
 
-Ensure you have **uv** installed (a fast Python package installer and resolver).
+*   **Google Gemini API Key**: Set your `GOOGLE_API_KEY` in your environment.
+*   **uv**: A fast Python package installer and resolver.
 
 ```bash
 pip install uv
@@ -78,10 +78,10 @@ Build and run the containerized application:
 
 ```bash
 docker build -t image-caption .
-docker run -p 5000:10000 -e GOOGLE_API_KEY=your_key_here image-caption
+docker run -p 5000:5000 -e GOOGLE_API_KEY=your_key_here image-caption
 ```
 
-##  Project Structure
+## Project Structure
 
 ```
 .
@@ -98,16 +98,30 @@ docker run -p 5000:10000 -e GOOGLE_API_KEY=your_key_here image-caption
 ├── pyproject.toml      # Project configuration
 └── uv.lock             # Dependency lockfile
 ```
+
+## Learnings & challenges
+
+**Learnings**:
+*   **Modern Dependency Management**: Gained hands-on experience using `uv` over traditional package managers, discovering significant speed improvements in resolution and installation.
+*   **Multimodal AI Integration**: Learned how to correctly format and stream image data (PIL) alongside text prompts to the Google Gemini API for seamless vision-language tasks.
+*   **Robust Server-Side Handling**: Improved understanding of handling edge cases in Flask like file size limits (`RequestEntityTooLarge`) and stream processing without saving files to disk.
+
+**Challenges**:
+*   **Transitioning Architectures**: Adapting the initial architecture to utilize external APIs (Gemini) required refactoring the expected model loading and inference logic previously designed for local models.
+*   **Secure API Key Management**: Ensuring the API Key was securely loaded in the environment and correctly handled both locally and in Docker without exposing it.
+*   **UI/UX State Management**: Implementing a smooth client-side preview for the uploaded image and managing the loading states gracefully before the backend returned the generated caption.
+
 ## Demo
 
 <img width="1919" height="928" alt="image" src="https://github.com/user-attachments/assets/85437049-0149-4379-a8d4-f98faf287928" />
 
 <img width="1916" height="972" alt="image" src="https://github.com/user-attachments/assets/2f95d080-b609-492e-8f79-e7ba8f1ce297" />
 
--Deplyment link for the app: [Link](https://image-caption-ejph.onrender.com)
+- Deployment link for the app: [Link](https://image-caption-ejph.onrender.com)
 
 ## Author
 Nikhil Mahesh
 
 ## License
 MIT
+
