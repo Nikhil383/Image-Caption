@@ -25,7 +25,7 @@ This project implements an industrial-grade end-to-end Multimodal AI solution fo
 The application follows a standard client-server architecture integrating a cloud-based LLM:
 -   **Client Layer**: A responsive web frontend (HTML/CSS/JS) capturing user image uploads via drag-and-drop or file selection.
 -   **Server Layer**: A Flask backend that handles file validation, stream processing, and securely manages API communication.
--   **AI Layer**: integration with the **Google Gemini API** (`gemini-1.5-flash` / `gemini-2.5-flash`), transmitting image streams directly to the vision encoder for natural language caption generation.
+-   **AI Layer**: integration with the **Google Gemini API** (`gemini-2.5-flash`), transmitting image streams directly to the vision encoder for natural language caption generation.
 
 ## Technology stack
 
