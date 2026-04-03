@@ -29,9 +29,9 @@ def generate_caption(image: Image.Image) -> str:
     """
     try:
         if not API_KEY:
-            return "Error: GOOGLE_API_KEY is not configured. Please set it in your environment."
+            raise RuntimeError("GOOGLE_API_KEY is not configured. Please set it in your environment.")
 
-        # Use the gemini-1.5-flash model which is fast and efficient for vision tasks
+        # Use the gemini-2.5-flash model which is fast and efficient for vision tasks
         model = genai.GenerativeModel("gemini-2.5-flash")
         
         # Construct the prompt
