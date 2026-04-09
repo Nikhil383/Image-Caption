@@ -1,4 +1,4 @@
-# 🖼️ Multimodal Image Captioning Engine
+# Multimodal Image Captioning Engine
 
 **An end-to-end AI SaaS platform for automated image description generation, deployed to production.**  
 *Built with Google Gemini, Flask, Docker, and modern DevOps practices.*
@@ -13,7 +13,7 @@
 
 ---
 
-## 💼 Why This Project Matters
+## Why This Project Matters
 
 In an era where **digital content accessibility** is both a legal requirement and ethical imperative, this platform solves a real-world problem:
 
@@ -26,15 +26,15 @@ In an era where **digital content accessibility** is both a legal requirement an
 
 ---
 
-## 🎯 Project Highlights
+## Project Highlights
 
-### 🧠 Core Capabilities
+### Core Capabilities
 - **Multimodal Vision-Language AI**: Integrates Google Gemini Flash (SOTA vision model) for high-accuracy image understanding
 - **Real-time Processing**: Stream-based API handling with instant client-side feedback
 - **Production Pipeline**: Containerized microservice architecture with automated dependency management
 - **Modern UX**: Drag-and-drop uploads, instant previews, responsive design
 
-### ⚡ Technical Complexity
+### Technical Complexity
 
 ```python
 # Architected for scale and maintainability
@@ -47,26 +47,26 @@ In an era where **digital content accessibility** is both a legal requirement an
 ```
 
 **Engineering Decisions Demonstrated:**
-- ✅ **Security-first**: API key management via environment variables, no secrets in code
-- ✅ **Performance**: Stream processing without disk I/O, efficient image-to-API serialization
-- ✅ **Reliability**: Comprehensive error handling, request size limits, graceful degradation
-- ✅ **DevOps**: Docker multi-stage builds, `uv` for sub-second dependency resolution
+- **Security-first**: API key management via environment variables, no secrets in code
+- **Performance**: Stream processing without disk I/O, efficient image-to-API serialization
+- **Reliability**: Comprehensive error handling, request size limits, graceful degradation
+- **DevOps**: Docker multi-stage builds, `uv` for sub-second dependency resolution
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Layer | Technology | How I Used It |
 |:-----:|:-----------|:--------------|
 | **AI/ML** | Google Gemini Flash | Multimodal vision-to-text inference via streaming API |
 | **Backend** | Python 3.11 + Flask | RESTful API design, request validation, error handling |
 | **Frontend** | Vanilla JS + CSS3 | Dynamic DOM manipulation, async fetch API, responsive grid |
-| **DevOps** | Docker + UV | Multi-stage containerization, lockfile-based reproducibility |
+| **MLOPS** | Docker + UV | Multi-stage containerization, lockfile-based reproducibility |
 | **Deployment** | Render | Production-grade PaaS deployment with auto-scaling |
 
 ---
 
-## 📊 Architecture Overview
+## Architecture Overview
 
 ```
 User Upload (Drag & Drop)
@@ -89,7 +89,7 @@ Dynamic DOM Update (Caption + Image Display)
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Clone & setup
@@ -107,7 +107,7 @@ docker build -t image-caption . && docker run -p 5000:5000 -e GOOGLE_API_KEY=$GO
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 image-caption/
@@ -125,7 +125,7 @@ image-caption/
 
 ---
 
-## 🎓 What I Learned
+##  What I Learned
 
 | Challenge | Solution | Skill Demonstrated |
 |:----------|:---------|:-------------------|
@@ -136,7 +136,7 @@ image-caption/
 
 ---
 
-## 📸 Demo
+## Demo
 
 ### Upload Interface
 ![Upload View](https://github.com/user-attachments/assets/85437049-0149-4379-8a4d-f98faf287928)
@@ -148,7 +148,7 @@ image-caption/
 
 ---
 
-## 📝 License
+## License
 
 MIT © Nikhil Mahesh
 
