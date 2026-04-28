@@ -25,6 +25,7 @@
         {% endwith %}
 
         <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="upload-area">
                 <p>Click or Drag to Upload Image</p>
                 <input type="file" name="image" accept="image/*" required

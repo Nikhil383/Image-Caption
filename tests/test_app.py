@@ -2,50 +2,39 @@
 
 import pytest
 from PIL import Image
-from image_caption.models import CaptionModel, generate_caption
+from image_caption.models import generate_caption
 from unittest.mock import MagicMock, patch
-
-@pytest.fixture
-def mock_pipeline():
-    with patch('image_caption.models.pipeline') as mock:
-        yield mock
-
-def test_model_singleton(mock_pipeline):
-    """Test that the model is only initialized once."""
-    # Reset singleton
-    CaptionModel._instance = None
-    
-    # First call
-    model1 = CaptionModel.get_pipeline()
-    # Second call
-    model2 = CaptionModel.get_pipeline()
-    
-    assert model1 is model2
-    assert mock_pipeline.call_count == 1
 
 def test_generate_caption_success():
     """Test generating a caption successfully."""
-    mock_pipe = MagicMock()
-    mock_pipe.return_value = [{'generated_text': 'a cute cat'}]
+    mock_model = MagicMock()
+    mock_model.generate_content.return_value.text = "a cute cat"
     
-    # Inject mock into singleton
-    CaptionModel._instance = mock_pipe
-    
-    # Dummy image
-    img = Image.new('RGB', (100, 100))
-    result = generate_caption(img)
-    
-    assert result == 'a cute cat'
+    with patch('google.generativeai.GenerativeModel', return_value=mock_model):
+        with patch('image_caption.models.API_KEY', 'fake_key'):
+            # Dummy image
+            img = Image.new('RGB', (100, 100))
+            result = generate_caption(img)
+            
+            assert result == 'a cute cat'
+
+def test_generate_caption_no_api_key():
+    """Test handling of missing API key."""
+    with patch('image_caption.models.API_KEY', None):
+        img = Image.new('RGB', (100, 100))
+        result = generate_caption(img)
+        assert "Error" in result
+        assert "GOOGLE_API_KEY is not configured" in result
 
 def test_generate_caption_error():
-    """Test handling of prediction errors."""
-    mock_pipe = MagicMock()
-    mock_pipe.side_effect = Exception("Model failed")
+    """Test handling of API errors."""
+    mock_model = MagicMock()
+    mock_model.generate_content.side_effect = Exception("API failed")
     
-    CaptionModel._instance = mock_pipe
-    
-    img = Image.new('RGB', (100, 100))
-    result = generate_caption(img)
-    
-    assert "Error" in result
-    assert "Model failed" in result
+    with patch('google.generativeai.GenerativeModel', return_value=mock_model):
+        with patch('image_caption.models.API_KEY', 'fake_key'):
+            img = Image.new('RGB', (100, 100))
+            result = generate_caption(img)
+            
+            assert "Error" in result
+            assert "API failed" in result
